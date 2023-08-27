@@ -3,119 +3,38 @@
   <body>
     <div id="root"></div>
   </body>
-  <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react@17.0.2/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
   <script type="text/babel">
-    function MinutesToHours() {
-      const [amount, setAmount] = React.useState(0);
-      const [inverted, setInverted] = React.useState(false);
-      const onChange = (event) => {
-        setAmount(event.target.value);
-      };
-      const reset = () => {
-        setAmount(0);
-      };
-      const onInverted = () => {
-        setAmount(inverted ? amount * 60 : Math.round(amount / 60));
-        setInverted((current) => !current);
-      };
+    function Btn({ text, fontSize }) {
       return (
-        <div>
-          <div>
-            <label htmlFor="minutes">Minutes</label>
-            <input
-              value={inverted ? amount * 60 : amount}
-              id="minutes"
-              placeholder="Minutes"
-              type="number"
-              onChange={onChange} //무언가 바뀌었을 때 onChange 함수 실행. -> minutes 변경
-              disabled={inverted}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="hours">Hours</label>
-            <input
-              value={inverted ? amount : Math.round(amount / 60)}
-              id="hours"
-              placeholder="Hours"
-              type="number"
-              onChange={onChange}
-              disabled={!inverted}
-            />
-          </div>
-          <button onClick={reset}>Reset</button>
-          <button onClick={onInverted}>
-            {inverted ? "Turn Back" : "Invert"}
-          </button>
-        </div>
+        <button
+          style={{
+            backgroundColor: "tomato",
+            color: "white",
+            padding: "10px 20px",
+            border: 0,
+            borderRadius: 10,
+            fontSize: fontSize,
+          }}
+        >
+          {text}
+        </button>
       );
     }
-    function KmToMiles() {
-      const [distance, setDistance] = React.useState(0);
-      const [inverted, setInverted] = React.useState(false);
-      const onChange = (event) => {
-        setDistance(event.target.value);
-      };
-      const onInverted = () => {
-        setDistance(
-          inverted
-            ? (distance * 0.6214).toFixed(5)
-            : (distance * 1.609).toFixed(5)
-        );
-        setInverted((current) => !current);
-      };
-      const reset = () => {
-        setDistance(0);
-      };
-      return (
-        <div>
-          <div>
-            <label for="Miles">Miles</label>
-            <input
-              id="Miles"
-              value={inverted ? (distance * 0.6214).toFixed(5) : distance}
-              onChange={onChange}
-              placeholder="miles"
-              type="number"
-              disabled={inverted}
-            />
-          </div>
-          <div>
-            <label for="Km">Km</label>
-            <input
-              id="Km"
-              value={inverted ? distance : (distance * 1.609).toFixed(5)}
-              onChange={onChange}
-              placeholder="km"
-              type="number"
-              disabled={!inverted}
-            />
-          </div>
-          <button onClick={reset}>reset</button>
-          <button onClick={onInverted}>Invert</button>
-        </div>
-      );
-    }
+    const MemorizedBtn = React.memo(Btn);
+    MemorizedBtn.propTypes = {
+      text: PropTypes.string,
+      fontSize: PropTypes.number,
+    };
 
     function App() {
-      const [index, setIndex] = React.useState("xx");
-      const onSelect = (event) => {
-        setIndex(event.target.value);
-      };
       return (
         <div>
-          <h1>Super Converter</h1>
-          <select onChange={onSelect}>
-            <option value="xx">Select your units</option>
-            <option value="0">Minutes & Hours</option>
-            <option value="1">Km & Miles</option>
-          </select>
-          <hr />
-          {index === "xx" ? "Plwase select your units" : null}
-          {index === "0" ? <MinutesToHours /> : null}
-          {index === "1" ? <KmToMiles /> : null}
+          <Btn text="Save Changes" fontSize={18} />
+          <Btn text={18} fontSize={"Continue"} />
         </div>
       );
     }
