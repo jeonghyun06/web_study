@@ -1,43 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [toDo, setToDo] = useState("");
-  const [toDos, setToDos] = useState([]);
-  const onChange = (e) => setToDo(e.target.value);
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (toDo === "") {
-      return;
-    }
-    setToDos((current) => [...current, toDo]);
-    setToDo("");
-  };
-  const deleteTodo = (index) => {
-    setToDos(toDos.filter((_, curIndex) => curIndex !== index));
-  };
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  const [dollors, setDollors] = useState(0);
+  const [Coin, setCoin] = useState(0);
+  const onChange = (e) => setDollors(e.target.value);
+  const onSelect = (e) => setCoin(e.target.value);
+
+  useEffect(() => {
+    fetch("https://api.coinpaprika.com/v1/tickers")
+      .then((response) => response.json())
+      .then((json) => {
+        setCoins(json);
+        setLoading(false);
+      });
+  }, []);
   return (
     <div>
-      <h1>My To Do ({toDos.length})</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={toDo}
-          type="text"
-          placeholder="Write your todo..."
-        />
-        <button>Add To Do</button>
-      </form>
+      <h1>The Coins! {loading ? "" : `(${coins.length})`}</h1>
       <hr />
-      {toDos.map((item, index) => (
-        <div key={index}>
-          <li key={index}>
-            {item}
-            <button key={index} onClick={() => deleteTodo(index)}>
-              delete to do
-            </button>
-          </li>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <div>
+          <input onChange={onChange} placeholder="Write dollors" />$ ={" "}
+          {dollors / coins[Coin].quotes.USD.price} {coins[Coin].symbol}
+          <hr />
+          <select onChange={onSelect}>
+            {coins.map((coin, index) => (
+              <option key={coin.id} value={index}>
+                {coin.name} ({coin.symbol}) : {coin.quotes.USD.price}$
+              </option>
+            ))}
+          </select>
         </div>
-      ))}
+      )}
     </div>
   );
 }
